@@ -8,3 +8,5 @@ alembic
 python-jose
 passlib
 psycopg2-binary
+
+python-dotenv
