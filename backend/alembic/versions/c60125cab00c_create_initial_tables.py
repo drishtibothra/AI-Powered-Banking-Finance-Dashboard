@@ -1,8 +1,8 @@
 """create initial tables
 
-Revision ID: 89c54b9fbcba
+Revision ID: c60125cab00c
 Revises: 
-Create Date: 2026-07-09 21:20:45.794725
+Create Date: 2026-07-12 11:00:57.228589
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '89c54b9fbcba'
+revision: str = 'c60125cab00c'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -94,7 +94,7 @@ def upgrade() -> None:
     sa.Column('entry_type', sa.Enum('income', 'expense', 'savings', name='entrytype'), nullable=False),
     sa.Column('description', sa.String(), nullable=True),
     sa.Column('date', sa.Date(), nullable=False),
-    sa.Column('frequency', sa.Enum('one_time', 'reccuring_monthly', name='frequency'), nullable=False),
+    sa.Column('frequency', sa.Enum('one_time', 'recurring_monthly', name='frequency'), nullable=False),
     sa.Column('recurrence_day', sa.Integer(), nullable=True),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=True),
     sa.ForeignKeyConstraint(['category_id'], ['categories.id'], ),

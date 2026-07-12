@@ -9,7 +9,7 @@ class EntryType(str, enum.Enum):
 
 class Frequency(str, enum.Enum):
     one_time = "one_time"
-    reccuring_monthly = "reccuring_monthly"
+    recurring_monthly = "recurring_monthly"
 
 class MessageRole(str, enum.Enum):
     user = "user"
