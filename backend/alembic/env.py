@@ -20,7 +20,6 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-# Read directly from .env — bypasses configparser interpolation entirely
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5432/finance_dashboard")
 
 

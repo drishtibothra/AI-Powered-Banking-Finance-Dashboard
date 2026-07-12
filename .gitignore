@@ -1,6 +1,5 @@
-# Virtual environment:
-myenv
+# Virtual environment
+myenv/
 
-
-# Database URL:
-backend\.env
+# Environment file
+backend/.env
