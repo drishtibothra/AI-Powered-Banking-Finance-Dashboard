@@ -5,21 +5,19 @@ from app.models.user import User
 
 # Authorization:
 from app.routers import auth
-
 # Categories:
 from app.routers import categories
-
 # Entries:
 from app.routers import entries
+# Budgets:
+from app.routers import budgets
 
 app = FastAPI(title="AI-Powered Banking & Finance Dashboard")
  
 app.include_router(auth.router)
-
 app.include_router(categories.router)
-
 app.include_router(entries.router)
-
+app.include_router(budgets.router)
 
 @app.get("/")
 def root():
