@@ -20,7 +20,7 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5432/finance_dashboard")
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5433/finance_dashboard")
 
 
 def run_migrations_offline() -> None:

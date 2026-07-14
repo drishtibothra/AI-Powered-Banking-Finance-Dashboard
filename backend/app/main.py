@@ -11,6 +11,9 @@ from app.routers import categories
 from app.routers import entries
 # Budgets:
 from app.routers import budgets
+# Analytics:
+from app.routers import analytics
+
 
 app = FastAPI(title="AI-Powered Banking & Finance Dashboard")
  
@@ -18,6 +21,7 @@ app.include_router(auth.router)
 app.include_router(categories.router)
 app.include_router(entries.router)
 app.include_router(budgets.router)
+app.include_router(analytics.router)
 
 @app.get("/")
 def root():

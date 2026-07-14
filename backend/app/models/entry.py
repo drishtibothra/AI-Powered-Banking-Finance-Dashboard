@@ -5,6 +5,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from app.core.database import Base
 from app.models.enums import EntryType, Frequency
+from pgvector.sqlalchemy import Vector
+
 
 class Entry(Base):
     __tablename__ = "entries"
@@ -25,3 +27,5 @@ class Entry(Base):
 
     user = relationship("User", back_populates="entries")
     category = relationship("Category", back_populates="entries")
+
+    embedding = Column(Vector(1536), nullable=True) 
