@@ -28,4 +28,4 @@ class Entry(Base):
     user = relationship("User", back_populates="entries")
     category = relationship("Category", back_populates="entries")
 
-    embedding = Column(Vector(1536), nullable=True) 
+    embedding = Column(Vector(3072), nullable=True)  

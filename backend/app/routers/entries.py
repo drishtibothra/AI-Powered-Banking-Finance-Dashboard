@@ -12,6 +12,8 @@ from app.models.entry import Entry
 from app.models.category import Category
 from app.schemas.entry import EntryCreate, EntryUpdate, EntryResponse
 from app.services.summary_service import recalculate_monthly_summary
+from app.services.embedding_service import generate_embedding
+from app.services.search_service import semantic_search_entries
 
 router = APIRouter(prefix="/entries", tags=["entries"])
 
@@ -56,6 +58,21 @@ def create_entry(
             detail=f"entry_type '{payload.entry_type.value}' does not match category '{category.name}', which is type '{category.entry_type.value}'",
         )
 
+    text_to_embed = f"""
+    Category: {category.name}
+    Entry Type: {payload.entry_type.value}
+    Description: {payload.description or "No description"}
+    Amount: ₹{payload.amount}
+    """
+    try:
+        embedding = generate_embedding(
+            text_to_embed,
+            task_type="RETRIEVAL_DOCUMENT"
+        )
+    except Exception as e:
+        print(f"Embedding generation failed: {e}")
+        embedding = None
+
     new_entry = Entry(
         user_id=current_user.id,
         category_id=payload.category_id,
@@ -65,6 +82,7 @@ def create_entry(
         date=payload.date,
         frequency=payload.frequency,
         recurrence_day=payload.recurrence_day,
+        embedding=embedding,
     )
     db.add(new_entry)
     db.commit()
@@ -177,3 +195,20 @@ def import_csv(
         recalculate_monthly_summary(db, current_user.id, month, year)
 
     return {"created": created_count, "errors": errors}
+
+@router.get("/search")
+def search_entries(
+    q: str = Query(...),
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    results = semantic_search_entries(db, current_user.id, q)
+
+    return [
+        {
+            "id": e.id,
+            "description": e.description,
+            "amount": str(e.amount),
+        }
+        for e in results
+    ]

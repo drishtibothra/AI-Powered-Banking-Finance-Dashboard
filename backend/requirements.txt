@@ -14,4 +14,6 @@ psycopg2-binary
 python-dotenv
 
 python-multipart
-pgvector openai
+pgvector 
+
+google-generativeai

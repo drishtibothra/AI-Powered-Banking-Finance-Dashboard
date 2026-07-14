@@ -1,12 +1,24 @@
 import os
-from openai import OpenAI
+from google import genai
+from dotenv import load_dotenv
 
-# Separate client, separate key — just for embeddings, not chat
-embedding_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+load_dotenv()
 
-def generate_embedding(text: str) -> list[float]:
-    response = embedding_client.embeddings.create(
-        model="text-embedding-3-small",
-        input=text,
+embedding_client = genai.Client(
+    api_key=os.getenv("GEMINI_API_KEY")
+)
+
+def generate_embedding(
+    text: str,
+    task_type: str = "SEMANTIC_SIMILARITY"
+) -> list[float]:
+
+    response = embedding_client.models.embed_content(
+        model="gemini-embedding-001",
+        contents=text,
+        config={
+            "task_type": task_type
+        }
     )
-    return response.data[0].embedding
+
+    return response.embeddings[0].values
