@@ -16,4 +16,4 @@ python-dotenv
 python-multipart
 pgvector 
 
-google-generativeai
+google-genai

@@ -16,7 +16,8 @@ from app.routers import entries
 from app.routers import budgets
 # Analytics:
 from app.routers import analytics
-
+# AI Chat:
+from app.routers import ai_chat
 
 app = FastAPI(title="AI-Powered Banking & Finance Dashboard")
  
@@ -25,6 +26,7 @@ app.include_router(categories.router)
 app.include_router(entries.router)
 app.include_router(budgets.router)
 app.include_router(analytics.router)
+app.include_router(ai_chat.router)
 
 @app.get("/")
 def root():
