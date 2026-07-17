@@ -7,7 +7,7 @@ import { TrendingUp } from "lucide-react";
 import { fetchTrend, fetchCategoryBreakdown, fetchBurnRate } from "../features/analytics/analyticsApi";
 import type { TrendPoint, CategoryBreakdownItem, BurnRateResponse } from "../features/analytics/analyticsApi";
 
-const monthNames = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const PIE_COLORS = ["#0B1120", "#C9A227", "#7C8DB5", "#34D399", "#F87171", "#131B2E"];
 
 function formatINR(value: string | number) {
@@ -29,7 +29,9 @@ function BreakdownPie({ title, data, emptyText }: { title: string; data: Categor
             <Pie data={pieData} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={90} label={(entry) => entry.name}>
               {pieData.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
             </Pie>
-            <Tooltip formatter={(value: number) => formatINR(value)} />
+            <Tooltip
+              formatter={(value) => formatINR(Number(value ?? 0))}
+            />
           </PieChart>
         </ResponsiveContainer>
       )}
@@ -112,7 +114,10 @@ export default function AnalyticsPage() {
               <CartesianGrid strokeDasharray="3 3" stroke="#D7DEE8" />
               <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#7C8DB5" }} axisLine={{ stroke: "#D7DEE8" }} />
               <YAxis tick={{ fontSize: 12, fill: "#7C8DB5" }} axisLine={{ stroke: "#D7DEE8" }} tickFormatter={(v) => `₹${v / 1000}k`} />
-              <Tooltip formatter={(value: number) => formatINR(value)} contentStyle={{ borderRadius: 8, borderColor: "#D7DEE8" }} />
+              <Tooltip
+                formatter={(value) => formatINR(Number(value ?? 0))}
+                contentStyle={{ borderRadius: 8, borderColor: "#D7DEE8" }}
+              />
               <Legend wrapperStyle={{ fontSize: 12 }} />
               <Line type="monotone" dataKey="Income" stroke="#34D399" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="Expense" stroke="#F87171" strokeWidth={2} dot={false} />
