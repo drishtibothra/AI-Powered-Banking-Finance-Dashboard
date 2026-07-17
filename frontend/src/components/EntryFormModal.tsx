@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import type { FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import type { AppDispatch, RootState } from "../app/store";
-import { addEntry, editEntry } from "../features/entries/entriesSlice";
+import { addEntry, editEntry, addCategory } from "../features/entries/entriesSlice";
 import type { Entry } from "../features/entries/entriesApi";
 import Modal from "./Modal";
 import FormInput from "./FormInput";
@@ -26,6 +26,9 @@ export default function EntryFormModal({ entry, onClose }: { entry?: Entry | nul
   const [recurrenceDay, setRecurrenceDay] = useState(entry?.recurrence_day ? String(entry.recurrence_day) : "1");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+  const [newCategoryName, setNewCategoryName] = useState("");
+  const [categoryError, setCategoryError] = useState<string | null>(null);
 
   const filteredCategories = useMemo(
     () => categories.filter((c) => c.entry_type === entryType),
@@ -65,6 +68,30 @@ export default function EntryFormModal({ entry, onClose }: { entry?: Entry | nul
     }
   };
 
+  const handleCreateCategory = async () => {
+    const trimmed = newCategoryName.trim();
+    if (!trimmed) return;
+    setCategoryError(null);
+
+    // Avoid duplicate names within the same entry_type
+    const exists = categories.some(
+      (c) => c.entry_type === entryType && c.name.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (exists) {
+      setCategoryError("A category with this name already exists.");
+      return;
+    }
+
+    try {
+      const result = await dispatch(addCategory({ name: trimmed, entry_type: entryType })).unwrap();
+      setCategoryId(result.id);
+      setNewCategoryName("");
+      setIsCreatingCategory(false);
+    } catch (err: any) {
+      setCategoryError(err?.response?.data?.detail || "Couldn't create category.");
+    }
+  };
+
   return (
     <Modal title={entry ? "Edit entry" : "Add entry"} onClose={onClose}>
       <form onSubmit={handleSubmit} noValidate>
@@ -84,15 +111,47 @@ export default function EntryFormModal({ entry, onClose }: { entry?: Entry | nul
 
         <div className="mb-4">
           <label htmlFor="category" className="block text-sm font-medium text-ink mb-1.5">Category</label>
-          <select id="category" value={categoryId} onChange={(e) => setCategoryId(Number(e.target.value))}
-            className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-ink
-              focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold">
-            <option value="">Select a category</option>
-            {filteredCategories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
-          </select>
-          {filteredCategories.length === 0 && (
-            <p className="mt-1.5 text-xs text-slate-soft">No {entryType} categories yet.</p>
+
+          {!isCreatingCategory ? (
+            <>
+              <select id="category" value={categoryId}
+                onChange={(e) => {
+                  if (e.target.value === "__new__") { setIsCreatingCategory(true); return; }
+                  setCategoryId(Number(e.target.value));
+                }}
+                className="w-full rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-ink
+          focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold">
+                <option value="">Select a category</option>
+                {filteredCategories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+                <option value="__new__">+ Create new category…</option>
+              </select>
+              {filteredCategories.length === 0 && (
+                <p className="mt-1.5 text-xs text-slate-soft">No {entryType} categories yet — create one above.</p>
+              )}
+            </>
+          ) : (
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                autoFocus
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleCreateCategory())}
+                placeholder={`e.g. "${entryType === "savings" ? "SIP" : entryType === "income" ? "Freelance" : "Subscriptions"}"`}
+                className="flex-1 rounded-lg border border-border bg-white px-3.5 py-2.5 text-sm text-ink
+          focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold"
+              />
+              <button type="button" onClick={handleCreateCategory}
+                className="px-3.5 py-2.5 rounded-lg bg-navy text-white text-sm font-medium hover:bg-navy-light transition-colors">
+                Add
+              </button>
+              <button type="button" onClick={() => { setIsCreatingCategory(false); setNewCategoryName(""); setCategoryError(null); }}
+                className="px-3 py-2.5 rounded-lg text-slate-soft text-sm hover:bg-paper transition-colors">
+                Cancel
+              </button>
+            </div>
           )}
+          {categoryError && <p className="mt-1.5 text-xs text-negative">{categoryError}</p>}
         </div>
 
         <FormInput id="amount" label="Amount (₹)" type="number" min="0" step="0.01" required

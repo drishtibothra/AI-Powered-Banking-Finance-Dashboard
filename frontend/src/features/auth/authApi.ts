@@ -21,3 +21,6 @@ export const loginRequest = (payload: LoginPayload) =>
 
 export const fetchCurrentUser = () =>
   apiClient.get<{ id: number; email: string }>("/auth/me");
+
+export const refreshTokenRequest = (refresh_token: string) =>
+  apiClient.post<{ access_token: string; token_type: string }>("/auth/refresh", { refresh_token });

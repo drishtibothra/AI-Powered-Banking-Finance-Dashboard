@@ -3,8 +3,9 @@ import type { FormEvent } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AxiosError } from "axios";
 import { signupRequest } from "../features/auth/authApi";
-import AuthLayout from "../components/authLayout";
-import FormInput from "../components/formInput";
+import AuthLayout from "../components/AuthLayout";
+import FormInput from "../components/FormInput";
+import PasswordInput from "../components/PasswordInput";
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -48,25 +49,50 @@ export default function SignupPage() {
       <p className="text-sm text-slate-soft mb-6">Takes less than a minute</p>
 
       <form onSubmit={handleSubmit} noValidate>
-        <FormInput id="email" label="Email" type="email" autoComplete="email" required
-          value={email} onChange={(e) => setEmail(e.target.value)} />
-        <FormInput id="password" label="Password" type="password" autoComplete="new-password" required
-          value={password} onChange={(e) => setPassword(e.target.value)} />
-        <FormInput id="confirmPassword" label="Confirm password" type="password" autoComplete="new-password" required
-          value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} />
+        <FormInput
+          id="email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <PasswordInput
+          id="password"
+          label="Password"
+          autoComplete="new-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <PasswordInput
+          id="confirmPassword"
+          label="Confirm password"
+          autoComplete="new-password"
+          required
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+        />
 
         {error && <p role="alert" className="mb-4 text-sm text-negative">{error}</p>}
 
-        <button type="submit" disabled={isSubmitting}
+        <button
+          type="submit"
+          disabled={isSubmitting}
           className="w-full rounded-lg bg-navy text-white font-medium py-2.5 text-sm
             hover:bg-navy-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed
-            focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2">
+            focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2"
+        >
           {isSubmitting ? "Creating account…" : "Create account"}
         </button>
       </form>
 
       <p className="mt-6 text-sm text-slate-soft text-center">
-        Already have an account? <Link to="/login" className="text-gold font-medium hover:underline">Log in</Link>
+        Already have an account?{" "}
+        <Link to="/login" className="text-gold font-medium hover:underline">
+          Log in
+        </Link>
       </p>
     </AuthLayout>
   );

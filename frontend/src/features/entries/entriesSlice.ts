@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { fetchEntriesRequest, fetchCategoriesRequest, createEntryRequest, updateEntryRequest, deleteEntryRequest} from "./entriesApi";
+import { fetchEntriesRequest, fetchCategoriesRequest, createEntryRequest, updateEntryRequest, deleteEntryRequest } from "./entriesApi";
 import type { Entry, Category, EntryPayload } from "./entriesApi";
+import { createCategoryRequest } from "./entriesApi";
 
 interface EntriesState {
   items: Entry[];
@@ -43,6 +44,14 @@ export const removeEntry = createAsyncThunk("entries/removeEntry", async (id: nu
   return id;
 });
 
+export const addCategory = createAsyncThunk(
+  "entries/addCategory",
+  async (payload: { name: string; entry_type: "income" | "expense" | "savings" }) => {
+    const { data } = await createCategoryRequest(payload);
+    return data;
+  }
+);
+
 const entriesSlice = createSlice({
   name: "entries",
   initialState,
@@ -70,8 +79,11 @@ const entriesSlice = createSlice({
       })
       .addCase(removeEntry.fulfilled, (state, action: PayloadAction<number>) => {
         state.items = state.items.filter((e) => e.id !== action.payload);
-      });
-  },
+      })
+      .addCase(addCategory.fulfilled, (state, action: PayloadAction<Category>) => {
+        state.categories.push(action.payload);
+      })
+},
 });
 
 export default entriesSlice.reducer;

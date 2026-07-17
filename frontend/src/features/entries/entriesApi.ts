@@ -40,3 +40,14 @@ export const updateEntryRequest = (id: number, payload: Partial<EntryPayload>) =
   apiClient.put<Entry>(`/entries/${id}`, payload);
 
 export const deleteEntryRequest = (id: number) => apiClient.delete(`/entries/${id}`);
+
+export const importCsvRequest = (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  return apiClient.post<{ created: number; errors: string[] }>("/entries/import-csv", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
+
+export const createCategoryRequest = (payload: { name: string; entry_type: "income" | "expense" | "savings" }) =>
+  apiClient.post<Category>("/categories", payload);

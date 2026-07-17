@@ -6,8 +6,9 @@ import { AxiosError } from "axios";
 import type { AppDispatch } from "../app/store";
 import { setCredentials } from "../features/auth/authSlice";
 import { loginRequest, fetchCurrentUser } from "../features/auth/authApi";
-import AuthLayout from "../components/authLayout";
-import FormInput from "../components/formInput";
+import AuthLayout from "../components/AuthLayout";
+import FormInput from "../components/FormInput";
+import PasswordInput from "../components/PasswordInput";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -57,23 +58,42 @@ export default function LoginPage() {
       <p className="text-sm text-slate-soft mb-6">Log in to your dashboard</p>
 
       <form onSubmit={handleSubmit} noValidate>
-        <FormInput id="email" label="Email" type="email" autoComplete="email" required
-          value={email} onChange={(e) => setEmail(e.target.value)} />
-        <FormInput id="password" label="Password" type="password" autoComplete="current-password" required
-          value={password} onChange={(e) => setPassword(e.target.value)} />
+        <FormInput
+          id="email"
+          label="Email"
+          type="email"
+          autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <PasswordInput
+          id="password"
+          label="Password"
+          autoComplete="current-password"
+          required
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
         {error && <p role="alert" className="mb-4 text-sm text-negative">{error}</p>}
 
-        <button type="submit" disabled={isSubmitting}
+        <button
+          type="submit"
+          disabled={isSubmitting}
           className="w-full rounded-lg bg-navy text-white font-medium py-2.5 text-sm
             hover:bg-navy-light transition-colors disabled:opacity-60 disabled:cursor-not-allowed
-            focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2">
+            focus:outline-none focus:ring-2 focus:ring-gold/50 focus:ring-offset-2"
+        >
           {isSubmitting ? "Logging in…" : "Log in"}
         </button>
       </form>
 
       <p className="mt-6 text-sm text-slate-soft text-center">
-        Don't have an account? <Link to="/signup" className="text-gold font-medium hover:underline">Sign up</Link>
+        Don't have an account?{" "}
+        <Link to="/signup" className="text-gold font-medium hover:underline">
+          Sign up
+        </Link>
       </p>
     </AuthLayout>
   );
