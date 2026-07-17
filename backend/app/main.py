@@ -6,6 +6,7 @@ from fastapi import Depends
 from app.core.dependencies import get_current_user
 from app.models.user import User
 from fastapi.middleware.cors import CORSMiddleware
+import os
 
 # Authorization:
 from app.routers import auth
@@ -22,10 +23,8 @@ from app.routers import ai_chat
 
 app = FastAPI(title="AI-Powered Banking & Finance Dashboard")
 
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+origins = os.getenv("ALLOWED_ORIGINS", "").split(",")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
