@@ -1,21 +1,23 @@
 import csv
 import io
 from datetime import date as date_type
-from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File, Query
-from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.user import User
-from app.models.entry import Entry
 from app.models.category import Category
-from app.schemas.entry import EntryCreate, EntryUpdate, EntryResponse
-from app.services.summary_service import recalculate_monthly_summary
+from app.models.entry import Entry
+from app.models.user import User
+from app.schemas.entry import EntryCreate, EntryResponse, EntryUpdate
 from app.services.embedding_service import generate_embedding
 from app.services.search_service import semantic_search_entries
+from app.services.summary_service import recalculate_monthly_summary
+from fastapi import (APIRouter, Depends, File, HTTPException, Query,
+                     UploadFile, status)
+from sqlalchemy import func
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/entries", tags=["entries"])
+
 
 @router.get("", response_model=list[EntryResponse])
 def list_entries(
@@ -39,16 +41,21 @@ def list_entries(
 
     return query.order_by(Entry.date.desc()).all()
 
+
 @router.post("", response_model=EntryResponse, status_code=status.HTTP_201_CREATED)
 def create_entry(
     payload: EntryCreate,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    category = db.query(Category).filter(
-        Category.id == payload.category_id,
-        (Category.user_id == current_user.id) | (Category.user_id.is_(None)),
-    ).first()
+    category = (
+        db.query(Category)
+        .filter(
+            Category.id == payload.category_id,
+            (Category.user_id == current_user.id) | (Category.user_id.is_(None)),
+        )
+        .first()
+    )
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
 
@@ -65,10 +72,7 @@ def create_entry(
     Amount: ₹{payload.amount}
     """
     try:
-        embedding = generate_embedding(
-            text_to_embed,
-            task_type="RETRIEVAL_DOCUMENT"
-        )
+        embedding = generate_embedding(text_to_embed, task_type="RETRIEVAL_DOCUMENT")
     except Exception as e:
         print(f"Embedding generation failed: {e}")
         embedding = None
@@ -88,8 +92,11 @@ def create_entry(
     db.commit()
     db.refresh(new_entry)
 
-    recalculate_monthly_summary(db, current_user.id, new_entry.date.month, new_entry.date.year)
+    recalculate_monthly_summary(
+        db, current_user.id, new_entry.date.month, new_entry.date.year
+    )
     return new_entry
+
 
 @router.put("/{entry_id}", response_model=EntryResponse)
 def update_entry(
@@ -98,9 +105,11 @@ def update_entry(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    entry = db.query(Entry).filter(
-        Entry.id == entry_id, Entry.user_id == current_user.id
-    ).first()
+    entry = (
+        db.query(Entry)
+        .filter(Entry.id == entry_id, Entry.user_id == current_user.id)
+        .first()
+    )
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
 
@@ -127,15 +136,18 @@ def update_entry(
     recalculate_monthly_summary(db, current_user.id, entry.date.month, entry.date.year)
     return entry
 
+
 @router.delete("/{entry_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_entry(
     entry_id: int,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    entry = db.query(Entry).filter(
-        Entry.id == entry_id, Entry.user_id == current_user.id
-    ).first()
+    entry = (
+        db.query(Entry)
+        .filter(Entry.id == entry_id, Entry.user_id == current_user.id)
+        .first()
+    )
     if not entry:
         raise HTTPException(status_code=404, detail="Entry not found")
 
@@ -195,6 +207,7 @@ def import_csv(
         recalculate_monthly_summary(db, current_user.id, month, year)
 
     return {"created": created_count, "errors": errors}
+
 
 @router.get("/search")
 def search_entries(

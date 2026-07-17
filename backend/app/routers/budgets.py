@@ -1,16 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
-from sqlalchemy.exc import IntegrityError
-
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.user import User
 from app.models.budget import Budget
 from app.models.category import Category
 from app.models.enums import EntryType
-from app.schemas.budget import BudgetCreate, BudgetUpdate, BudgetResponse
+from app.models.user import User
+from app.schemas.budget import BudgetCreate, BudgetResponse, BudgetUpdate
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/budgets", tags=["budgets"])
+
 
 @router.get("", response_model=list[BudgetResponse])
 def list_budgets(
@@ -35,10 +35,14 @@ def create_budget(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    category = db.query(Category).filter(
-        Category.id == payload.category_id,
-        (Category.user_id == current_user.id) | (Category.user_id.is_(None)),
-    ).first()
+    category = (
+        db.query(Category)
+        .filter(
+            Category.id == payload.category_id,
+            (Category.user_id == current_user.id) | (Category.user_id.is_(None)),
+        )
+        .first()
+    )
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
 
@@ -78,9 +82,11 @@ def update_budget(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    budget = db.query(Budget).filter(
-        Budget.id == budget_id, Budget.user_id == current_user.id
-    ).first()
+    budget = (
+        db.query(Budget)
+        .filter(Budget.id == budget_id, Budget.user_id == current_user.id)
+        .first()
+    )
     if not budget:
         raise HTTPException(status_code=404, detail="Budget not found")
 
@@ -98,9 +104,11 @@ def delete_budget(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    budget = db.query(Budget).filter(
-        Budget.id == budget_id, Budget.user_id == current_user.id
-    ).first()
+    budget = (
+        db.query(Budget)
+        .filter(Budget.id == budget_id, Budget.user_id == current_user.id)
+        .first()
+    )
     if not budget:
         raise HTTPException(status_code=404, detail="Budget not found")
 

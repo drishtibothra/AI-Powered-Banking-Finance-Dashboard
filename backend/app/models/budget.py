@@ -1,13 +1,20 @@
 # Budgets model (table):
 
-from sqlalchemy import Column, Integer, Numeric, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import relationship
 from app.core.database import Base
+from sqlalchemy import Column, ForeignKey, Integer, Numeric, UniqueConstraint
+from sqlalchemy.orm import relationship
+
 
 class Budget(Base):
     __tablename__ = "budgets"
     __table_args__ = (
-        UniqueConstraint("user_id", "category_id", "month", "year", name="uq_user_category_month_year"),
+        UniqueConstraint(
+            "user_id",
+            "category_id",
+            "month",
+            "year",
+            name="uq_user_category_month_year",
+        ),
     )
 
     id = Column(Integer, primary_key=True, index=True)

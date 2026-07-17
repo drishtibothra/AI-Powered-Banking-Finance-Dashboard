@@ -1,5 +1,7 @@
 from decimal import Decimal
+
 from pydantic import BaseModel, field_validator
+
 
 class BudgetCreate(BaseModel):
     category_id: int
@@ -21,6 +23,7 @@ class BudgetCreate(BaseModel):
             raise ValueError("Month must be between 1 and 12")
         return value
 
+
 class BudgetUpdate(BaseModel):
     limit_amount: Decimal | None = None
 
@@ -30,6 +33,7 @@ class BudgetUpdate(BaseModel):
         if value is not None and value <= 0:
             raise ValueError("Limit amount must be greater than 0")
         return value
+
 
 class BudgetResponse(BaseModel):
     id: int

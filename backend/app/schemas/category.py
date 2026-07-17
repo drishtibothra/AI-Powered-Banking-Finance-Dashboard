@@ -1,5 +1,5 @@
-from pydantic import BaseModel, field_validator
 from app.models.enums import EntryType
+from pydantic import BaseModel, field_validator
 
 
 class CategoryCreate(BaseModel):

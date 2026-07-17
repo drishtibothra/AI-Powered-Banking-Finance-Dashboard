@@ -1,18 +1,21 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func
 from app.models.entry import Entry
-from app.models.monthly_summary import MonthlySummary
 from app.models.enums import EntryType
+from app.models.monthly_summary import MonthlySummary
+from sqlalchemy import func
+from sqlalchemy.orm import Session
+
 
 def recalculate_monthly_summary(db: Session, user_id: int, month: int, year: int):
-    totals = db.query(
-        Entry.entry_type,
-        func.sum(Entry.amount).label("total")
-    ).filter(
-        Entry.user_id == user_id,
-        func.extract("month", Entry.date) == month,
-        func.extract("year", Entry.date) == year,
-    ).group_by(Entry.entry_type).all()
+    totals = (
+        db.query(Entry.entry_type, func.sum(Entry.amount).label("total"))
+        .filter(
+            Entry.user_id == user_id,
+            func.extract("month", Entry.date) == month,
+            func.extract("year", Entry.date) == year,
+        )
+        .group_by(Entry.entry_type)
+        .all()
+    )
 
     totals_map = {t.entry_type: t.total for t in totals}
     total_income = totals_map.get(EntryType.income, 0)
@@ -20,11 +23,15 @@ def recalculate_monthly_summary(db: Session, user_id: int, month: int, year: int
     total_savings = totals_map.get(EntryType.savings, 0)
     net_free_balance = total_income - total_expense - total_savings
 
-    summary = db.query(MonthlySummary).filter(
-        MonthlySummary.user_id == user_id,
-        MonthlySummary.month == month,
-        MonthlySummary.year == year,
-    ).first()
+    summary = (
+        db.query(MonthlySummary)
+        .filter(
+            MonthlySummary.user_id == user_id,
+            MonthlySummary.month == month,
+            MonthlySummary.year == year,
+        )
+        .first()
+    )
 
     if summary:
         summary.total_income = total_income

@@ -1,9 +1,10 @@
 # AI_conversations model (table):
 
-from sqlalchemy import Column, Integer, ForeignKey, DateTime
+from app.core.database import Base
+from sqlalchemy import Column, DateTime, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from app.core.database import Base
+
 
 class AIConversation(Base):
     __tablename__ = "ai_conversations"

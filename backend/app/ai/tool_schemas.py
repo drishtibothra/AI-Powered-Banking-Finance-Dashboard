@@ -10,10 +10,16 @@ get_transactions_tool = types.FunctionDeclaration(
     parameters=types.Schema(
         type="OBJECT",
         properties={
-            "start_date": types.Schema(type="STRING", description="Start date, YYYY-MM-DD"),
+            "start_date": types.Schema(
+                type="STRING", description="Start date, YYYY-MM-DD"
+            ),
             "end_date": types.Schema(type="STRING", description="End date, YYYY-MM-DD"),
-            "category_name": types.Schema(type="STRING", description="Optional category name, e.g. 'Food'"),
-            "entry_type": types.Schema(type="STRING", enum=["income", "expense", "savings"]),
+            "category_name": types.Schema(
+                type="STRING", description="Optional category name, e.g. 'Food'"
+            ),
+            "entry_type": types.Schema(
+                type="STRING", enum=["income", "expense", "savings"]
+            ),
         },
         required=["start_date", "end_date"],
     ),
@@ -25,7 +31,9 @@ get_budget_status_tool = types.FunctionDeclaration(
     parameters=types.Schema(
         type="OBJECT",
         properties={
-            "category_name": types.Schema(type="STRING", description="Expense category name, e.g. 'Food'"),
+            "category_name": types.Schema(
+                type="STRING", description="Expense category name, e.g. 'Food'"
+            ),
             "month": types.Schema(type="INTEGER", description="Month (1-12)"),
             "year": types.Schema(type="INTEGER", description="Year, e.g. 2026"),
         },
@@ -43,8 +51,12 @@ calculate_affordability_tool = types.FunctionDeclaration(
     parameters=types.Schema(
         type="OBJECT",
         properties={
-            "target_amount": types.Schema(type="NUMBER", description="Amount the user wants to spend"),
-            "target_date": types.Schema(type="STRING", description="Target date, YYYY-MM-DD"),
+            "target_amount": types.Schema(
+                type="NUMBER", description="Amount the user wants to spend"
+            ),
+            "target_date": types.Schema(
+                type="STRING", description="Target date, YYYY-MM-DD"
+            ),
         },
         required=["target_amount", "target_date"],
     ),
@@ -56,8 +68,12 @@ get_spending_trend_tool = types.FunctionDeclaration(
     parameters=types.Schema(
         type="OBJECT",
         properties={
-            "category_name": types.Schema(type="STRING", description="Optional category to narrow to"),
-            "months": types.Schema(type="INTEGER", description="Number of past months, default 6"),
+            "category_name": types.Schema(
+                type="STRING", description="Optional category to narrow to"
+            ),
+            "months": types.Schema(
+                type="INTEGER", description="Number of past months, default 6"
+            ),
         },
         required=[],
     ),
@@ -69,8 +85,12 @@ create_budget_tool = types.FunctionDeclaration(
     parameters=types.Schema(
         type="OBJECT",
         properties={
-            "category_name": types.Schema(type="STRING", description="Expense category name"),
-            "limit_amount": types.Schema(type="NUMBER", description="Budget limit amount"),
+            "category_name": types.Schema(
+                type="STRING", description="Expense category name"
+            ),
+            "limit_amount": types.Schema(
+                type="NUMBER", description="Budget limit amount"
+            ),
             "month": types.Schema(type="INTEGER", description="Month (1-12)"),
             "year": types.Schema(type="INTEGER", description="Year"),
         },
@@ -84,9 +104,15 @@ flag_anomaly_tool = types.FunctionDeclaration(
     parameters=types.Schema(
         type="OBJECT",
         properties={
-            "category_name": types.Schema(type="STRING", description="Optional category to check"),
-            "month": types.Schema(type="INTEGER", description="Month to check, defaults to current"),
-            "year": types.Schema(type="INTEGER", description="Year, defaults to current"),
+            "category_name": types.Schema(
+                type="STRING", description="Optional category to check"
+            ),
+            "month": types.Schema(
+                type="INTEGER", description="Month to check, defaults to current"
+            ),
+            "year": types.Schema(
+                type="INTEGER", description="Year, defaults to current"
+            ),
         },
         required=[],
     ),
@@ -101,7 +127,9 @@ semantic_search_tool = types.FunctionDeclaration(
     parameters=types.Schema(
         type="OBJECT",
         properties={
-            "query": types.Schema(type="STRING", description="Natural-language concept to search for"),
+            "query": types.Schema(
+                type="STRING", description="Natural-language concept to search for"
+            ),
             "top_k": types.Schema(type="INTEGER", description="Max results, default 5"),
         },
         required=["query"],

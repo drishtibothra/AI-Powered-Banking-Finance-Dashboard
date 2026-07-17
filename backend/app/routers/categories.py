@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import or_
-
 from app.core.database import get_db
 from app.core.dependencies import get_current_user
-from app.models.user import User
 from app.models.category import Category
-from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryResponse
+from app.models.user import User
+from app.schemas.category import (CategoryCreate, CategoryResponse,
+                                  CategoryUpdate)
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import or_
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix="/categories", tags=["categories"])
 
@@ -17,9 +17,11 @@ def list_categories(
     current_user: User = Depends(get_current_user),
 ):
     # Return both the user's own categories AND system defaults (user_id is None)
-    categories = db.query(Category).filter(
-        or_(Category.user_id == current_user.id, Category.user_id.is_(None))
-    ).all()
+    categories = (
+        db.query(Category)
+        .filter(or_(Category.user_id == current_user.id, Category.user_id.is_(None)))
+        .all()
+    )
     return categories
 
 
@@ -47,9 +49,11 @@ def update_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    category = db.query(Category).filter(
-        Category.id == category_id, Category.user_id == current_user.id
-    ).first()
+    category = (
+        db.query(Category)
+        .filter(Category.id == category_id, Category.user_id == current_user.id)
+        .first()
+    )
 
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")
@@ -70,9 +74,11 @@ def delete_category(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
-    category = db.query(Category).filter(
-        Category.id == category_id, Category.user_id == current_user.id
-    ).first()
+    category = (
+        db.query(Category)
+        .filter(Category.id == category_id, Category.user_id == current_user.id)
+        .first()
+    )
 
     if not category:
         raise HTTPException(status_code=404, detail="Category not found")

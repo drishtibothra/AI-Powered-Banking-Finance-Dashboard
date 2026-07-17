@@ -1,14 +1,14 @@
-import os
 import json
-from google import genai
-from google.genai import types
-from sqlalchemy.orm import Session
+import os
 
-from app.ai.tool_schemas import finance_tools
 from app.ai.tool_executor import execute_tool
+from app.ai.tool_schemas import finance_tools
 from app.models.ai_conversation import AIConversation
 from app.models.ai_message import AIMessage
 from app.models.enums import MessageRole
+from google import genai
+from google.genai import types
+from sqlalchemy.orm import Session
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -22,11 +22,17 @@ SYSTEM_PROMPT = (
 MAX_TOOL_ITERATIONS = 5
 
 
-def run_agent_chat(db: Session, user_id: int, message: str, conversation_id: int | None = None) -> dict:
+def run_agent_chat(
+    db: Session, user_id: int, message: str, conversation_id: int | None = None
+) -> dict:
     if conversation_id:
-        conversation = db.query(AIConversation).filter(
-            AIConversation.id == conversation_id, AIConversation.user_id == user_id
-        ).first()
+        conversation = (
+            db.query(AIConversation)
+            .filter(
+                AIConversation.id == conversation_id, AIConversation.user_id == user_id
+            )
+            .first()
+        )
         if not conversation:
             conversation = AIConversation(user_id=user_id)
             db.add(conversation)
@@ -38,20 +44,30 @@ def run_agent_chat(db: Session, user_id: int, message: str, conversation_id: int
         db.commit()
         db.refresh(conversation)
 
-    user_msg = AIMessage(conversation_id=conversation.id, role=MessageRole.user, content=message)
+    user_msg = AIMessage(
+        conversation_id=conversation.id, role=MessageRole.user, content=message
+    )
     db.add(user_msg)
     db.commit()
 
-    past_messages = db.query(AIMessage).filter(
-        AIMessage.conversation_id == conversation.id, AIMessage.role != MessageRole.tool
-    ).order_by(AIMessage.created_at.asc()).all()
+    past_messages = (
+        db.query(AIMessage)
+        .filter(
+            AIMessage.conversation_id == conversation.id,
+            AIMessage.role != MessageRole.tool,
+        )
+        .order_by(AIMessage.created_at.asc())
+        .all()
+    )
 
     contents = []
     for m in past_messages:
         role = "user" if m.role == MessageRole.user else "model"
         contents.append(types.Content(role=role, parts=[types.Part(text=m.content)]))
 
-    config = types.GenerateContentConfig(system_instruction=SYSTEM_PROMPT, tools=[finance_tools])
+    config = types.GenerateContentConfig(
+        system_instruction=SYSTEM_PROMPT, tools=[finance_tools]
+    )
 
     iterations = 0
     final_text = None
@@ -90,7 +106,9 @@ def run_agent_chat(db: Session, user_id: int, message: str, conversation_id: int
             db.add(tool_msg)
 
             tool_response_parts.append(
-                types.Part.from_function_response(name=tool_name, response={"result": result})
+                types.Part.from_function_response(
+                    name=tool_name, response={"result": result}
+                )
             )
 
         db.commit()
@@ -99,7 +117,9 @@ def run_agent_chat(db: Session, user_id: int, message: str, conversation_id: int
     if final_text is None:
         final_text = "I wasn't able to fully process that — could you rephrase or ask something more specific?"
 
-    assistant_msg = AIMessage(conversation_id=conversation.id, role=MessageRole.assistant, content=final_text)
+    assistant_msg = AIMessage(
+        conversation_id=conversation.id, role=MessageRole.assistant, content=final_text
+    )
     db.add(assistant_msg)
     db.commit()
 

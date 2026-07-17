@@ -1,7 +1,8 @@
 from datetime import date as Date
 from decimal import Decimal
-from pydantic import BaseModel, field_validator
+
 from app.models.enums import EntryType, Frequency
+from pydantic import BaseModel, field_validator
 
 
 class EntryCreate(BaseModel):

@@ -1,10 +1,12 @@
 # AI_messages model (table):
 
-from sqlalchemy import Column, Integer, String, ForeignKey, Enum, DateTime, JSON
-from sqlalchemy.orm import relationship
-from sqlalchemy.sql import func
 from app.core.database import Base
 from app.models.enums import MessageRole
+from sqlalchemy import (JSON, Column, DateTime, Enum, ForeignKey, Integer,
+                        String)
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql import func
+
 
 class AIMessage(Base):
     __tablename__ = "ai_messages"

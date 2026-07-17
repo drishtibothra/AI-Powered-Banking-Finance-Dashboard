@@ -1,12 +1,13 @@
 import os
 import sys
 from logging.config import fileConfig
+
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from sqlalchemy import create_engine
 from alembic import context
+from sqlalchemy import create_engine
 
 sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -20,7 +21,9 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://postgres:password@localhost:5433/finance_dashboard")
+DATABASE_URL = os.getenv(
+    "DATABASE_URL", "postgresql://postgres:password@localhost:5433/finance_dashboard"
+)
 
 
 def run_migrations_offline() -> None:
