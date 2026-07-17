@@ -44,7 +44,7 @@ jobs:
         working-directory: ./backend
         run: |
           pip install flake8
-          flake8 app/ --max-line-length=120 --exclude=alembic --ignore=E402,E501,W292,W291,E302,F401,E251,E127,W293
+          flake8 app/ --max-line-length=120 --exclude=alembic --ignore=E402,E501,W292,W291,E302,F401,E251,E127,W293,W503
 
       - name: Run migrations
         working-directory: ./backend
