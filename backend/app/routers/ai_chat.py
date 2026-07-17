@@ -4,8 +4,12 @@ from app.models.ai_conversation import AIConversation
 from app.models.ai_message import AIMessage
 from app.models.enums import MessageRole
 from app.models.user import User
-from app.schemas.ai_chat import (ChatRequest, ChatResponse,
-                                 ConversationHistoryResponse, MessageResponse)
+from app.schemas.ai_chat import (
+    ChatRequest,
+    ChatResponse,
+    ConversationHistoryResponse,
+    MessageResponse,
+)
 from app.services.agent_service import run_agent_chat
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session

@@ -11,8 +11,7 @@ from app.schemas.entry import EntryCreate, EntryResponse, EntryUpdate
 from app.services.embedding_service import generate_embedding
 from app.services.search_service import semantic_search_entries
 from app.services.summary_service import recalculate_monthly_summary
-from fastapi import (APIRouter, Depends, File, HTTPException, Query,
-                     UploadFile, status)
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 

@@ -1,9 +1,12 @@
-from app.services.ai_tools_service import (calculate_affordability,
-                                           create_budget, flag_anomaly,
-                                           get_budget_status,
-                                           get_spending_trend,
-                                           get_transactions,
-                                           semantic_search_tool_wrapper)
+from app.services.ai_tools_service import (
+    calculate_affordability,
+    create_budget,
+    flag_anomaly,
+    get_budget_status,
+    get_spending_trend,
+    get_transactions,
+    semantic_search_tool_wrapper,
+)
 
 
 def execute_tool(db, user_id: int, tool_name: str, args: dict) -> dict:

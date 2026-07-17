@@ -2,8 +2,7 @@
 
 from app.core.database import Base
 from app.models.enums import MessageRole
-from sqlalchemy import (JSON, Column, DateTime, Enum, ForeignKey, Integer,
-                        String)
+from sqlalchemy import JSON, Column, DateTime, Enum, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

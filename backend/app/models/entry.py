@@ -3,8 +3,16 @@
 from app.core.database import Base
 from app.models.enums import EntryType, Frequency
 from pgvector.sqlalchemy import Vector
-from sqlalchemy import (Column, Date, DateTime, Enum, ForeignKey, Integer,
-                        Numeric, String)
+from sqlalchemy import (
+    Column,
+    Date,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Integer,
+    Numeric,
+    String,
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 

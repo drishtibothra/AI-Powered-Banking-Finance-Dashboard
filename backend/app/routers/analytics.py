@@ -8,8 +8,12 @@ from app.models.entry import Entry
 from app.models.enums import EntryType
 from app.models.monthly_summary import MonthlySummary
 from app.models.user import User
-from app.schemas.analytics import (BurnRateResponse, CategoryBreakdownItem,
-                                   SummaryResponse, TrendPoint)
+from app.schemas.analytics import (
+    BurnRateResponse,
+    CategoryBreakdownItem,
+    SummaryResponse,
+    TrendPoint,
+)
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import func
 from sqlalchemy.orm import Session
