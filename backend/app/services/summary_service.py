@@ -1,8 +1,8 @@
-from app.models.entry import Entry
-from app.models.enums import EntryType
-from app.models.monthly_summary import MonthlySummary
-from sqlalchemy import func
 from sqlalchemy.orm import Session
+from sqlalchemy import func
+from app.models.entry import Entry
+from app.models.monthly_summary import MonthlySummary
+from app.models.enums import EntryType
 
 
 def recalculate_monthly_summary(db: Session, user_id: int, month: int, year: int):
